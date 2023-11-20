@@ -5,7 +5,7 @@ from sklearn.linear_model import Ridge, Lasso, ElasticNet
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 
-data = pd.read_csv("./data/kc_house_data.csv")
+data = pd.read_csv("../data/kc_house_data.csv")
 
 data = data.drop(["date"], axis=1)
 

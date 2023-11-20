@@ -10,7 +10,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
 # work with data
-data = pd.read_csv("./data/kc_house_data.csv")
+data = pd.read_csv("../data/kc_house_data.csv")
 
 data = data.drop(["date"], axis=1)
 
@@ -71,6 +71,6 @@ y_pred = model.predict(X_test)
 mse = mean_squared_error(y_test, y_pred)
 accuracy = accuracy_score(y_test, y_pred)
 
-joblib.dump(model, "./models/logistic_regression_model_scaled.joblib")
+joblib.dump(model, "../models/logistic_regression_model_scaled.joblib")
 
 ic(accuracy, mse)
