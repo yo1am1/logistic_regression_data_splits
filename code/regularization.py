@@ -1,3 +1,4 @@
+import joblib
 import numpy as np
 import pandas as pd
 from icecream import ic
@@ -42,7 +43,7 @@ ridge_grid.fit(X_train, y_train)
 ridge_pred = ridge_grid.predict(X_test)
 ridge_mse = mean_squared_error(y_test, ridge_pred)
 
-ic("Ridge Best Parameters:", ridge_grid.best_params_, 'MSE', ridge_mse)
+ic("Ridge Best Parameters:", ridge_grid.best_params_, "MSE", ridge_mse)
 
 # Lasso Regression
 lasso_model = Lasso()
@@ -66,3 +67,21 @@ ic(
     "MSE:",
     elastic_net_mse,
 )
+
+# Compare the MSE of the three models
+compare = pd.DataFrame(
+    {
+        "Ridge": ridge_mse,
+        "Lasso": lasso_mse,
+        "Elastic Net": elastic_net_mse,
+    },
+    index=["MSE"],
+    dtype=np.float64,
+)
+
+ic(compare)
+
+# save
+joblib.dump(ridge_grid, "../models/ridge_grid.joblib")
+joblib.dump(lasso_grid, "../models/lasso_grid.joblib")
+joblib.dump(elastic_net_grid, "../models/elastic_net_grid.joblib")
