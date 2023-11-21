@@ -1,9 +1,10 @@
+import numpy as np
 import pandas as pd
 from icecream import ic
 from sklearn import preprocessing
 from sklearn.linear_model import Ridge, Lasso, ElasticNet
 from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 
 data = pd.read_csv("../data/kc_house_data.csv")
 
@@ -25,29 +26,43 @@ X = data_normalized[
 y = data_normalized["price"]
 
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=25
+    X, y, test_size=0.2, random_state=10
 )
 
-alphas = [0.1, 0.5, 1, 5, 10]
+param_grid = {
+    "alpha": [0.0001, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 10],
+}
 
-for alpha in alphas:
-    # Ridge Regression
-    ridge_model = Ridge(alpha=alpha)
-    ridge_model.fit(X_train, y_train)
-    ridge_pred = ridge_model.predict(X_test)
-    ridge_mse = mean_squared_error(y_test, ridge_pred)
-    ic(alpha, ridge_mse)
+ic(param_grid)
 
-    # Lasso Regression
-    lasso_model = Lasso(alpha=alpha)
-    lasso_model.fit(X_train, y_train)
-    lasso_pred = lasso_model.predict(X_test)
-    lasso_mse = mean_squared_error(y_test, lasso_pred)
-    ic(alpha, lasso_mse)
+# Ridge Regression
+ridge_model = Ridge()
+ridge_grid = GridSearchCV(ridge_model, param_grid)
+ridge_grid.fit(X_train, y_train)
+ridge_pred = ridge_grid.predict(X_test)
+ridge_mse = mean_squared_error(y_test, ridge_pred)
 
-    # Elastic Net Regression
-    elastic_net_model = ElasticNet(alpha=alpha, l1_ratio=0.5)
-    elastic_net_model.fit(X_train, y_train)
-    elastic_net_pred = elastic_net_model.predict(X_test)
-    elastic_net_mse = mean_squared_error(y_test, elastic_net_pred)
-    ic(alpha, elastic_net_mse)
+ic("Ridge Best Parameters:", ridge_grid.best_params_, 'MSE', ridge_mse)
+
+# Lasso Regression
+lasso_model = Lasso()
+lasso_grid = GridSearchCV(lasso_model, param_grid)
+lasso_grid.fit(X_train, y_train)
+lasso_pred = lasso_grid.predict(X_test)
+lasso_mse = mean_squared_error(y_test, lasso_pred)
+
+ic("Lasso Best Parameters:", lasso_grid.best_params_, "MSE:", lasso_mse)
+
+# Elastic Net Regression
+elastic_net_model = ElasticNet()
+elastic_net_grid = GridSearchCV(elastic_net_model, param_grid)
+elastic_net_grid.fit(X_train, y_train)
+elastic_net_pred = elastic_net_grid.predict(X_test)
+elastic_net_mse = mean_squared_error(y_test, elastic_net_pred)
+
+ic(
+    "Elastic Net Best Parameters:",
+    elastic_net_grid.best_params_,
+    "MSE:",
+    elastic_net_mse,
+)
